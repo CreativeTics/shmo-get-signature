@@ -22,7 +22,9 @@ const getQueryResult = async (req, res) => {
       result.length === 0 ||
       (!result[0].empl_firma && !result[0].firma_aux)
     ) {
-      return res.status(404).json({ error: "No results found" });
+      res.contentType("image/jpeg");
+      res.send(Buffer.from("", "base64"));
+      return;
     }
     const imageBase64 = result[0]?.firma_aux ?? result[0].empl_firma;
     const imageBuffer = Buffer.from(
