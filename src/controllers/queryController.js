@@ -17,8 +17,13 @@ const getQueryResult = async (req, res) => {
     if (result.length === 0 || !result[0].empl_firma) {
       return res.status(404).json({ error: "No results found" });
     }
-
-    res.send(result[0].empl_firma);
+    const imageBase64 = result[0].empl_firma;
+    const imageBuffer = Buffer.from(
+      imageBase64.replace("data:image/png;base64,", ""),
+      "base64"
+    );
+    res.contentType("image/jpeg");
+    res.send(imageBuffer);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
