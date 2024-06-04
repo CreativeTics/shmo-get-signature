@@ -18,20 +18,19 @@ const getQueryResult = async (req, res) => {
 
     const result = await executeQuery(query);
 
-    if (
-      result.length === 0 ||
-      (!result[0].empl_firma && !result[0].firma_aux)
-    ) {
-      res.contentType("image/jpeg");
-      res.send(Buffer.from("", "base64"));
-      return;
+    if (result.length === 0) {
+      return res.status(404).json({ error: "Annotation not found" });
     }
-    const imageBase64 = result[0]?.firma_aux ?? result[0].empl_firma;
+    const imageBase64 =
+      result[0]?.firma_aux ??
+      result[0].empl_firma ??
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Vw8AAoEBfymqrywAAAAASUVORK5CYII="; // white image
+
     const imageBuffer = Buffer.from(
       imageBase64.replace("data:image/png;base64,", ""),
       "base64"
     );
-    res.contentType("image/jpeg");
+    res.contentType("image/png");
     res.send(imageBuffer);
   } catch (error) {
     res.status(500).json({ error: error.message });
